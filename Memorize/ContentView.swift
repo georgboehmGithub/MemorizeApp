@@ -8,107 +8,70 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State var emojis = ["🌯", "🍫", "🍭", "🍞", "🥨", "🍙", "🥕", "🧀", "🍔","🍖", "🥚", "🥩", "🥗", "🥠", "🍩", "🍡", "🍣", "🌭"]
-    @State var emojiCount = 12
+    @ObservedObject var viewModel: EmojiMemoryGame
+    
+//    @State var emojis = ["🌯", "🍫", "🍭", "🍞", "🥨", "🍙", "🥕", "🧀", "🍔","🍖", "🥚", "🥩", "🥗", "🥠", "🍩", "🍡", "🍣", "🌭"]
     @State var homeScreen = false
     var body: some View {
-        if homeScreen {
-            VStack {
-                ScrollView {
-                    Text("Memorize!").font(.largeTitle)
-                    Spacer()
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
-                        ForEach (emojis.shuffled()[0..<emojiCount], id: \.self) { emoji in
-                            CardView(content: emoji).aspectRatio(2/3, contentMode: .fit)
-                        }
-                    }
-                }
+        VStack {
+            ScrollView {
                 HStack {
-                    home
+                    Text("Memorize!").font(.largeTitle)
+                    newGame
                 }
-                .font(.largeTitle)
-                .padding(.horizontal)
-            }
-        } else {
-            VStack {
-                menuView(label: "🍔", theme: "Food", color: .red)
-                    .onTapGesture {
-                        homeScreen = !homeScreen
-                        emojiCount = 6
-                        emojis = ["🌯", "🍫", "🍭", "🍞", "🥨", "🍙", "🥕", "🧀", "🍔","🍖", "🥚", "🥩", "🥗", "🥠", "🍩", "🍡", "🍣", "🌭"]
+                Spacer()
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
+                    ForEach (viewModel.cards) { card in
+                        CardView(card: card).aspectRatio(2/3, contentMode: .fit)
+                            .onTapGesture {
+                                let _ = print("PICKED CARD!")
+                                viewModel.choose(card)
+                            }
                     }
-                menuView(label: "🏀", theme: "Sports", color: .green)
-                    .onTapGesture {
-                        homeScreen = !homeScreen
-                        emojiCount = 12
-                        emojis = ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "🏒", "🪃", "🥊", "🤿", "🥌", "🎣", "⛷"]
-                    }
-                menuView(label: "🏳️‍🌈", theme: "Flags", color: .blue)
-                    .onTapGesture {
-                        homeScreen = !homeScreen
-                        emojiCount = 8
-                        emojis = ["🏳️", "🏴‍☠️", "🏳️‍🌈", "🚩", "🇦🇹", "🇨🇦", "🇹🇩", "🇨🇰", "🇮🇨", "🇨🇽", "🇵🇫", "🇬🇱", "🇯🇴", "🇱🇧", "🇵🇼", "🇺🇬", "🇺🇦"]
-                    }
-            }
+                }
             }
         }
-    var home: some View {
+    }
+    var newGame: some View {
         Button {
-            homeScreen = !homeScreen
+            viewModel.rollTheme()
         } label: {
-            Image(systemName: "house")
+            Image(systemName: "house").font(.largeTitle)
         }
     }
 }
 
-struct menuView: View {
-    let label: String
-    let theme: String
-    let color: Color
-    
-    var body: some View{
-        ZStack {
-            let shape = RoundedRectangle(cornerRadius: 25)
-            shape.fill(color)
-            VStack {
-                Text(theme).font(.largeTitle)
-                Text(label).font(.largeTitle)
-            }
-        }.padding()
-    }
-}
-
+// TODO PASS THEME COLOR
 struct CardView: View {
-    var content: String
-    @State var isFaceUp: Bool = true
+    let card: MemoryGame<String>.Card
+    // TODO: let color: String
+
     var body: some View {
         return ZStack {
             let shape = RoundedRectangle(cornerRadius: 25)
-            if isFaceUp {
+            if card.isFaceUp {
                 shape
                     .fill(.red)
                 shape
                     .strokeBorder(lineWidth: 3)
-                Text(content)
+                Text(card.content)
                     .font(.largeTitle)
+            } else if card.isMatched {
+                shape.opacity(0) // Card becomes transparent
             } else {
                 shape
                     .fill(.red)
             }
-        }
-        //.padding()
-        .onTapGesture {
-            isFaceUp = !isFaceUp
         }
     }
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        let game = EmojiMemoryGame()
+        ContentView(viewModel: game)
             .preferredColorScheme(.dark)
-        ContentView()
+        ContentView(viewModel: game)
             .preferredColorScheme(.light)
-            .previewInterfaceOrientation(.landscapeLeft)
     }
 }
