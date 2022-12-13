@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @ObservedObject var viewModel: EmojiMemoryGame
     
-//    @State var emojis = ["🌯", "🍫", "🍭", "🍞", "🥨", "🍙", "🥕", "🧀", "🍔","🍖", "🥚", "🥩", "🥗", "🥠", "🍩", "🍡", "🍣", "🌭"]
     @State var homeScreen = false
     var body: some View {
         VStack {
@@ -22,9 +21,8 @@ struct ContentView: View {
                 Spacer()
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 75))]) {
                     ForEach (viewModel.cards) { card in
-                        CardView(card: card).aspectRatio(2/3, contentMode: .fit)
+                        CardView(card: card, color: viewModel.getThemeColor()).aspectRatio(2/3, contentMode: .fit)
                             .onTapGesture {
-                                let _ = print("PICKED CARD!")
                                 viewModel.choose(card)
                             }
                     }
@@ -34,24 +32,23 @@ struct ContentView: View {
     }
     var newGame: some View {
         Button {
-            viewModel.rollTheme()
+            viewModel.newGame()
         } label: {
             Image(systemName: "house").font(.largeTitle)
         }
     }
 }
 
-// TODO PASS THEME COLOR
 struct CardView: View {
     let card: MemoryGame<String>.Card
-    // TODO: let color: String
+    let color: Color
 
     var body: some View {
         return ZStack {
             let shape = RoundedRectangle(cornerRadius: 25)
             if card.isFaceUp {
                 shape
-                    .fill(.red)
+                    .fill(color)
                 shape
                     .strokeBorder(lineWidth: 3)
                 Text(card.content)
@@ -60,7 +57,7 @@ struct CardView: View {
                 shape.opacity(0) // Card becomes transparent
             } else {
                 shape
-                    .fill(.red)
+                    .fill(color)
             }
         }
     }
@@ -73,5 +70,6 @@ struct ContentView_Previews: PreviewProvider {
             .preferredColorScheme(.dark)
         ContentView(viewModel: game)
             .preferredColorScheme(.light)
+            .previewInterfaceOrientation(.landscapeLeft)
     }
 }
