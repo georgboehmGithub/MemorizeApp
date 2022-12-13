@@ -11,8 +11,9 @@ class EmojiMemoryGame: ObservableObject {
     @Published private var theme: Theme
     @Published private var model: MemoryGame<String>
     private let memoryGameData: memoryGameData
+    typealias Card = MemoryGame<String>.Card
     
-    static func createMemoryGame(withTheme usedTheme: Theme) -> MemoryGame<String> {
+    private static func createMemoryGame(withTheme usedTheme: Theme) -> MemoryGame<String> {
         return MemoryGame<String>(numberOfPairsOfCards: usedTheme.numberOfCards) {pairIndex in usedTheme.pickedEmojis[pairIndex]}
     }
     
@@ -44,13 +45,13 @@ class EmojiMemoryGame: ObservableObject {
         self.model = EmojiMemoryGame.createMemoryGame(withTheme: newTheme)
     }
     
-    var cards: Array<MemoryGame<String>.Card> {
+    var cards: Array<Card> {
         return model.cards
     }
     
     // MARK: - Intent(s)
     
-    func choose(_ card: MemoryGame<String>.Card) {
+    func choose(_ card: Card) {
         model.choose(card)
     }
     
