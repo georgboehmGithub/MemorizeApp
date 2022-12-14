@@ -17,7 +17,7 @@ struct memoryGameData {
     
     func selectRandomTheme() -> Theme {
         let color = colors.randomElement() ?? colors[0]
-        let emojis = allEmojis.randomElement() ?? allEmojis[0]
+        let emojis = allEmojis.randomElement()?.shuffled() ?? allEmojis[0]
         let numberOfPairs = numberOfPairs.randomElement() ?? numberOfPairs[0]
         let randomTheme = Theme(color: color, numberOfCards: numberOfPairs, emojis: emojis)
         return randomTheme
