@@ -13,7 +13,7 @@ struct memoryGameData {
         ["⚽️", "🏀", "🏈", "⚾️", "🥎", "🎾", "🏐", "🏉", "🥏", "🎱", "🏓", "🏒", "🪃", "🥊", "🤿", "🥌", "🎣", "⛷"],
         ["🏳️", "🏴‍☠️", "🏳️‍🌈", "🚩", "🇦🇹", "🇨🇦", "🇹🇩", "🇨🇰", "🇮🇨", "🇨🇽", "🇵🇫", "🇬🇱", "🇯🇴", "🇱🇧", "🇵🇼", "🇺🇬", "🇺🇦"]]
     private (set) var colors = ["red", "orange", "blue", "purple", "green", "yellow"]
-    private (set) var numberOfPairs = [4, 5, 6, 8]
+    private (set) var numberOfPairs = [6, 8, 10, 12, 14, 16]
     
     func selectRandomTheme() -> Theme {
         let color = colors.randomElement() ?? colors[0]
