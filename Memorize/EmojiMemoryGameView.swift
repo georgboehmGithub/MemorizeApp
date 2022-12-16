@@ -29,6 +29,7 @@ struct EmojiMemoryGameView: View {
                         }
                 }
             })
+            Text("Score: \(game.score)").font(.largeTitle)
         }
     }
     var newGame: some View {
